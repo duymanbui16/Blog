@@ -1,0 +1,16 @@
+<div class="example-small-box">
+    <div class="example-container">
+        <mat-form-field style="display: block">
+            <input matInput placeholder="Enter your email" [formControl]="email" required>
+            <mat-error *ngIf="email.invalid">{{getErrorEmail()}}</mat-error>
+        </mat-form-field>
+        <mat-form-field style="display: block">
+            <input matInput placeholder="Enter your password" [formControl]="password" required type="password">
+            <mat-error *ngIf="password.invalid">{{getErrorPassword()}}</mat-error>
+        </mat-form-field>
+        <mat-form-field style="display: block">
+            <input matInput placeholder="Retype your password" [formControl]="retypedPassword" required type="password">
+            <mat-error *ngIf="retypedPassword.invalid">{{getErrorRetypedPassword()}}</mat-error>
+        </mat-form-field>
+    </div>
+</div>
