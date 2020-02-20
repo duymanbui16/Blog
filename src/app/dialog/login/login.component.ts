@@ -5,13 +5,18 @@ import {FormControl, Validators,ValidatorFn, FormsModule, AbstractControl} from 
 import { AngularFireAuth } from '@angular/fire/auth';
 import { auth } from 'firebase';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { UsersService } from 'src/app/services/users.service';
+import { async } from '@angular/core/testing';
+import { AngularFirestore } from '@angular/fire/firestore';
 @Component({
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
 
-  constructor(public dialogRef: MatDialogRef<LoginComponent>, public afAuth: AngularFireAuth, public snackbar: MatSnackBar) { }
+  constructor(public dialogRef: MatDialogRef<LoginComponent>, 
+    public afAuth: AngularFireAuth, public snackbar: MatSnackBar,
+    public user: UsersService, public afs: AngularFirestore) { }
   email = new FormControl('', [Validators.required, Validators.email]);
   password=new FormControl('',[Validators.required, Validators.minLength(8)]);
   retypedPassword = new FormControl('', [Validators.required, this.passwordDoesntMatch(this.password.value)]);
@@ -59,7 +64,8 @@ export class LoginComponent implements OnInit {
 
   login() {
     this.afAuth.auth.signInWithEmailAndPassword(this.email.value, this.password.value)
-      .then(() => {
+      .then(async() => {
+        await this.user.userRegister(this.afAuth.auth.currentUser.uid)
         this.snackbar.open("Login successful", "OK", { duration: 2000 });
         this.dialogRef.close();
       }).catch((err) => {
@@ -67,13 +73,46 @@ export class LoginComponent implements OnInit {
       });
   }
 
+
+  // login() {
+  //   this.afAuth.auth.signInWithEmailAndPassword(this.email.value, this.password.value)
+  //     .then(() => {
+  //       this.snackbar.open("Login successful", "OK", { duration: 2000 });
+  //       this.dialogRef.close();
+  //     }).catch((err) => {
+  //       this.snackbar.open(err, "OK", { duration: 2000 });
+  //     });
+  // }
+
+  // async login() {
+  //   const credetial = await this.afAuth.auth.signInWithEmailAndPassword(this.email.value, this.password.value);
+  //     return this.user.userRegister(credetial.user.uid).then(() => {
+  //       this.snackbar.open("Login successful", "OK", { duration: 2000 });
+  //       this.dialogRef.close();
+  //     }).catch((err) => {
+  //       this.snackbar.open(err, "OK", { duration: 2000 });
+  //     });
+  // }
+
   loginWithGoogle(){
     const provider = new auth.GoogleAuthProvider
-    this.afAuth.auth.signInWithPopup(provider).then(()=>
-    this.snackbar.open("Login sucessfully", "OK", { duration: 2000 })).catch((err)=>{
-this.snackbar.open(err, "OK", { duration: 2000 });
+    this.afAuth.auth.signInWithPopup(provider)
+    .then(async ()=>{
+    await this.user.userRegister(this.afAuth.auth.currentUser.uid)
+    this.snackbar.open("Login sucessfully", "OK", { duration: 2000 })}
+    )
+    .catch((err)=>{
+      this.snackbar.open(err, "OK", { duration: 2000 });
     })
   }
+
+  // loginWithGoogle(){
+  //   const provider = new auth.GoogleAuthProvider
+  //   this.afAuth.auth.signInWithPopup(provider).then(()=>
+  //   this.snackbar.open("Login sucessfully", "OK", { duration: 2000 })).catch((err)=>{
+  //     this.snackbar.open(err, "OK", { duration: 2000 });
+  //   })
+  // }
 
 
   ngOnInit() {

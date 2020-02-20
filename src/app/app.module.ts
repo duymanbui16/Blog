@@ -13,10 +13,14 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import { ReactiveFormsModule, FormsModule, FormControl } from '@angular/forms';
 import {MatTabsModule} from '@angular/material/tabs';
-import {AngularFireModule} from '@angular/fire'
-import {AngularFireAuthModule} from '@angular/fire/auth'
 import { environment } from '../environments/environment';
+import {AngularFireModule} from '@angular/fire'
+import {AngularFireAuthModule, AngularFireAuth} from '@angular/fire/auth'
+
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { UsersService } from './services/users.service';
+import { AngularFirestore } from '@angular/fire/firestore';
+
 
 
 @NgModule({
@@ -30,6 +34,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     BrowserAnimationsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
+    
     MatDialogModule,
     MatCardModule,
     MatButtonModule,
@@ -41,7 +46,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [UsersService,AngularFirestore,AngularFireAuth],
   bootstrap: [AppComponent],
   entryComponents: [LoginComponent]
 })
